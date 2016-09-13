@@ -1,67 +1,115 @@
 
 <html>
 <head>
-		<meta charset="utf-8">
-		<script src="jquery-3.1.0.min.js"></script>
-		<script src="paper-full.js"></script>
-		<script type="text/paperscript" canvas="paper">
-			var $ = window.$;
+<meta charset="utf-8">
+<script src="jquery-3.1.0.min.js"></script>
+<script src="paper-full.js"></script>
+<script type="text/paperscript" canvas="paper">
+	var $ = window.$;
 
-			//Fill in the background
-      //var background = new Shape.Rectangle(view.bounds);
-			//background.fillColor = "Green";
+				var public_key = 'WGL3QgMoxVFbAYxWpWav';
+				function drawData()
+				{
 
-			var public_key = 'WGL3QgMoxVFbAYxWpWav';
-			function drawData()
-			{
-        /*var topLeft = new Point(30, 10);
-        var rectSize = new Size(10, 100);
-        var rect = new Path.Rectangle(topLeft, rectSize);
-        rect.fillColor = 'Red';*/
+					//Make small rectangles for the key
 
-        var x = new Point(5,5);
-        var y = new Point(5,100);
-        var z = new Point(1000,100);
-        var l=new Path(x);
-        l.strokeColor = "black";
-        l.add(y);
-        l.add(z);
-				$.ajax({
-					url: 'https://data.sparkfun.com/output/' + public_key + '.json',
-					data: {page: 1},
-					dataType: 'jsonp',
-				}).done(
-					function(results)
+	        var topLeft1 = new Point(368, 390);
+	        var rectSize1 = new Size(10, 10);
+	        var rect1 = new Path.Rectangle(topLeft1, rectSize1);
+	        rect1.fillColor = 'Red';
+
+					var topLeft2 = new Point(368, 410);
+	        var rectSize2 = new Size(10, 10);
+	        var rect2 = new Path.Rectangle(topLeft2, rectSize2);
+	        rect2.fillColor = 'Blue';
+
+					//Draw axes
+
+	        var x = new Point(45,0);
+	        var y = new Point(45,300);
+	        var z = new Point(5000,300);
+	        var l=new Path(x);
+
+					//Make Labels for axes, key and Title
+
+					var textCurr = new PointText(new Point(400, 400));
+					textCurr.justification = 'center';
+					textCurr.fillColor = 'black';
+					textCurr.content = 'Current';
+
+					var textVolt = new PointText(new Point(400, 420));
+					textVolt.justification = 'center';
+					textVolt.fillColor = 'black';
+					textVolt.content = 'Voltage';
+
+					var textTime = new PointText(new Point(380, 380));
+					textTime.justification = 'center';
+					textTime.fillColor = 'black';
+					textTime.content = '---> Time';
+
+					var textTime = new PointText(new Point(350, 350));//Title
+					textTime.justification = 'center';
+					textTime.fillColor = 'black';
+					textTime.content = 'Voltage and Current in a Solar Powered Weather Station';
+
+					for(var i = 10;i<3000;i+=20)//axes
 					{
-						console.log("Got " + results.length + " results");
-						for(var i = 0; i < results.length; i++)
-						{
-              row = results[i];
-              console.log(row.current1+";"+row.voltage1);
-                var topLeft1 = new Point((10+(20*i)),(100-row.current1));
-                var bottomRight1 = new Point((20+(20*i)),100);
-                var rectMax = new Path.Rectangle(topLeft1,bottomRight1);//new Path.Rectangle(topLeft1,size1);
-                //console.log("Draw rectMax:", topLeft1, i, "!!!!!!!!");
-                rectMax.fillColor = 'Red';
-
-                  var topLeft2 = new Point(10+(20*i),100-row.voltage1);
-                  var bottomRight2 = new Point(20+(20*i),100);
-                  var rectMin = new Path.Rectangle(topLeft2,bottomRight2);
-                  rectMin.fillColor = 'Blue';
-
-						}
-            console.log("OUTSIDE THE LOOP");
-						view.draw();
-						window.setTimeout(drawData, 30000);
+						var textTime = new PointText(new Point(40, 305-i));
+						textTime.justification = 'right';
+						textTime.fillColor = 'black';
+						textTime.content = i+"-";
 					}
-				);
-			}
 
-			drawData();
+						//making the axes
 
-		</script>
-	</head>
-	<body>
-		<canvas id="paper" width="500px" height="500px" resize></canvas>
-	</body>
+	        l.strokeColor = "black";
+	        l.add(y);
+	        l.add(z);
+
+					//Connecting the sparkfun Datasource
+
+					$.ajax({
+						url: 'https://data.sparkfun.com/output/' + public_key + '.json',
+						data: {page: 1},
+						dataType: 'jsonp',
+					}).done(
+						function(results)
+						{
+							console.log("Got " + results.length + " results");
+							for(var i = 0; i < results.length; i++)
+							{
+	              row = results[i];
+	              console.log(row.current1+";"+row.voltage1);//Print the voltage and current values
+
+								//Make a red rectangle for current
+
+	                var topLeft1 = new Point((50+(20*i)),(300-row.current1));
+	                var bottomRight1 = new Point((60+(20*i)),300);
+	                var rectMax = new Path.Rectangle(topLeft1,bottomRight1);
+	                rectMax.fillColor = 'Red';
+
+									//Make a blue Rectangle for voltage
+
+	                  var topLeft2 = new Point(50+(20*i),300-row.voltage1);
+	                  var bottomRight2 = new Point(60+(20*i),300);
+	                  var rectMin = new Path.Rectangle(topLeft2,bottomRight2);
+	                  rectMin.fillColor = 'Blue';
+
+
+
+							}
+	            //console.log("OUTSIDE THE LOOP");
+							view.draw();
+							window.setTimeout(drawData, 30000);
+						}
+					);
+				}
+
+				drawData();
+
+</script>
+</head>
+<body>
+			<canvas id="paper" width="5000px" height="500px" resize></canvas>
+</body>
 </html>

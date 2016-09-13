@@ -1,0 +1,67 @@
+
+<html>
+<head>
+		<meta charset="utf-8">
+		<script src="jquery-3.1.0.min.js"></script>
+		<script src="paper-full.js"></script>
+		<script type="text/paperscript" canvas="paper">
+			var $ = window.$;
+
+			//Fill in the background
+      //var background = new Shape.Rectangle(view.bounds);
+			//background.fillColor = "Green";
+
+			var public_key = 'WGL3QgMoxVFbAYxWpWav';
+			function drawData()
+			{
+        /*var topLeft = new Point(30, 10);
+        var rectSize = new Size(10, 100);
+        var rect = new Path.Rectangle(topLeft, rectSize);
+        rect.fillColor = 'Red';*/
+
+        var x = new Point(5,5);
+        var y = new Point(5,100);
+        var z = new Point(1000,100);
+        var l=new Path(x);
+        l.strokeColor = "black";
+        l.add(y);
+        l.add(z);
+				$.ajax({
+					url: 'https://data.sparkfun.com/output/' + public_key + '.json',
+					data: {page: 1},
+					dataType: 'jsonp',
+				}).done(
+					function(results)
+					{
+						console.log("Got " + results.length + " results");
+						for(var i = 0; i < results.length; i++)
+						{
+              row = results[i];
+              console.log(row.current1+";"+row.voltage1);
+                var topLeft1 = new Point((10+(20*i)),(100-row.current1));
+                var bottomRight1 = new Point((20+(20*i)),100);
+                var rectMax = new Path.Rectangle(topLeft1,bottomRight1);//new Path.Rectangle(topLeft1,size1);
+                //console.log("Draw rectMax:", topLeft1, i, "!!!!!!!!");
+                rectMax.fillColor = 'Red';
+
+                  var topLeft2 = new Point(10+(20*i),100-row.voltage1);
+                  var bottomRight2 = new Point(20+(20*i),100);
+                  var rectMin = new Path.Rectangle(topLeft2,bottomRight2);
+                  rectMin.fillColor = 'Blue';
+
+						}
+            console.log("OUTSIDE THE LOOP");
+						view.draw();
+						window.setTimeout(drawData, 30000);
+					}
+				);
+			}
+
+			drawData();
+
+		</script>
+	</head>
+	<body>
+		<canvas id="paper" width="500px" height="500px" resize></canvas>
+	</body>
+</html>
